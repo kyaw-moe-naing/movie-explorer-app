@@ -38,7 +38,7 @@ const MovieCard = (props: MovieCardProps) => {
       </View>
       <View style={[styles.row, styles.padding]}>
         <View style={styles.content}>
-          <Text style={styles.title}>{movie.title}</Text>
+          <Text style={[styles.title, { color: colors.text }]}>{movie.title}</Text>
           <Text style={[styles.info, { color: colors.text }]}>{date}</Text>
         </View>
         <IconButton

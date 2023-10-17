@@ -34,7 +34,7 @@ const LoginScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.container}>
-        <Text style={styles.appName}>Movie Explorer App</Text>
+        <Text style={[styles.appName, { color: colors.text }]}>Movie Explorer App</Text>
       </View>
       <Button
         loading={loading}

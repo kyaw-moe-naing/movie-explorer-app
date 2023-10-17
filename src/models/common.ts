@@ -1,4 +1,5 @@
 interface PageFetchParams {
+  id?: number;
   page?: number;
   language: 'en-US';
 }

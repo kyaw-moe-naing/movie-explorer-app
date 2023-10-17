@@ -5,9 +5,9 @@ export const base_uri: string = 'https://api.themoviedb.org/3';
 export const image_base_uri: string = 'https://image.tmdb.org/t/p/original';
 
 export const Endpoints = {
-  upcoming: `${base_uri}/movie/upcoming`,
-  popular: `${base_uri}/movie/popular`,
-  details: `${base_uri}/movie`,
+  upcoming: `/movie/upcoming`,
+  popular: `/movie/popular`,
+  details: `/movie`,
 };
 
 export enum UIStatus {

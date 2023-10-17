@@ -1,6 +1,5 @@
 import { useTheme } from "@react-navigation/native";
 import { Alert, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
-import { useEffect, useState } from "react";
 import Button from "../../../components/Button";
 import Avatar from "../../../components/Avatar";
 import { MenuIcon } from "../../../components/Icons";
@@ -8,7 +7,7 @@ import IconButton from "../../../components/IconButton";
 import auth from '@react-native-firebase/auth';
 import { Tab } from "../../../util/constants";
 import { useAppDispatch, useAppSelector } from "../../../redux/hook";
-import { getMovies, getPage, getPopularMovies, getTab, getUpcomingMovies, setTab } from "../../../redux/slices/app";
+import { getTab, setTab } from "../../../redux/slices/app";
 
 const Header = () => {
   const { colors } = useTheme();
@@ -18,14 +17,6 @@ const Header = () => {
 
   function changeTab(newTab: Tab) {
     dispatch(setTab(newTab));
-    switch (newTab) {
-      case Tab.UPCOMING:
-        dispatch(getUpcomingMovies(1));
-        break;
-      case Tab.POPULAR:
-        dispatch(getPopularMovies(1));
-        break;
-    }
   }
 
   function logout() {

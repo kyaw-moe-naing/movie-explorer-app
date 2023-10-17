@@ -1,19 +1,19 @@
-import { Image, ScrollView, StatusBar, StyleSheet, Text, View } from "react-native"
+import { Image, Platform, ScrollView, StatusBar, StyleSheet, Text, View } from "react-native"
 import AppBar from "../../components/AppBar";
 import { RouteProp, useRoute, useTheme } from "@react-navigation/native";
 import Info from "./components/Info";
 import Cast from "./components/Cast";
-import { useEffect, useState } from "react";
-import { addToFavourite, getError, getFavourites, getMovie, getMovieDetails, getListUIStatus, removeFromFavourite, getDetailsUIStatus } from "../../redux/slices/app";
-import { Movie } from "../../models/movie";
+import { addToFavourite, getFavourites, removeFromFavourite } from "../../redux/slices/app";
 import { useAppDispatch, useAppSelector } from "../../redux/hook";
-import { UIStatus, image_base_uri } from "../../util/constants";
+import { image_base_uri } from "../../util/constants";
 import Loading from "../../components/Loading";
 import Message from "../../components/Message";
 import { RootStackParamList } from "../../navigation/navigation";
 import Moment from 'moment';
 import IconButton from "../../components/IconButton";
 import { HeartIcon } from "../../components/Icons";
+import { useGetCastsFromMovieQuery, useGetMovieDetailsQuery } from "../../redux/slices/api";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 
 const MovieDetailsScreen = () => {
   const { colors } = useTheme();
@@ -21,21 +21,16 @@ const MovieDetailsScreen = () => {
   const route = useRoute<RouteProp<RootStackParamList, 'MovieDetails'>>()
   const id = route.params.id;
 
-  const status = useAppSelector(getDetailsUIStatus);
-  const movie = useAppSelector(getMovie);
-  const error = useAppSelector(getError);
-
   const favourites = useAppSelector(getFavourites);
-
   const dispatch = useAppDispatch();
 
-  useEffect(() => {
-    fetchAPI();
-  }, []);
+  const {
+    data: movie,
+    isFetching,
+    isError,
+    error,
+  } = useGetMovieDetailsQuery({ id: id, language: 'en-US' })
 
-  async function fetchAPI() {
-    dispatch(getMovieDetails(id));
-  }
 
   function toggleFavourite(value: boolean) {
     if (value) {
@@ -48,7 +43,7 @@ const MovieDetailsScreen = () => {
   const Header = () => {
     return (
       <View style={styles.header}>
-        <Text style={styles.title}>{movie?.title}</Text>
+        <Text style={[styles.title, { color: colors.text }]}>{movie?.title}</Text>
         <Text style={[styles.info, { color: colors.text }]}>{movie?.genres.map((genre) => genre.name).join(', ')}</Text>
       </View>
     );
@@ -72,43 +67,73 @@ const MovieDetailsScreen = () => {
   const Overview = () => {
     return (
       <View style={styles.subContainer}>
-        <Text style={[styles.label, { backgroundColor: colors.background, paddingBottom: 10 }]}>Overview</Text>
-        <Text style={[styles.text, { backgroundColor: colors.background }]}>{movie?.overview}</Text>
+        <Text style={[styles.label, { color: colors.text, paddingBottom: 10 }]}>Overview</Text>
+        <Text style={[styles.text, { color: colors.text }]}>{movie?.overview}</Text>
       </View>
     );
   }
 
   const Casts = () => {
+    const {
+      data: cast = [],
+    } = useGetCastsFromMovieQuery({ id: id, language: 'en-US' })
+
+    if (!cast || cast.length == 0) {
+      return (
+        <></>
+      );
+    }
+
     return (
       <View style={styles.subContainer}>
-        <Text style={[styles.label, { backgroundColor: colors.background }]}>Casts</Text>
+        <Text style={[styles.label, { color: colors.text }]}>Casts</Text>
         <ScrollView horizontal contentContainerStyle={styles.list}>
-          {movie?.cast.slice(0, 10).map((cast) => <Cast key={cast.id} cast={cast} />)}
+          {cast.slice(0, cast.length > 10 ? 10 : cast.length).map((cast) => <Cast key={cast.id} cast={cast} />)}
         </ScrollView>
       </View>
     );
   }
 
-  if (!movie || status == UIStatus.LOADING) {
-    return (
-      <Loading />
-    );
-  }
+  const UI = () => {
+    if (!movie || isFetching) {
+      return (
+        <Loading />
+      );
+    }
 
-  if (status == UIStatus.FAILED) {
+    if (isError) {
+      return (
+        <Message
+          text={(error as FetchBaseQueryError).data?.toString() ?? 'Error while fetching data'}
+          onPress={fetch}
+        />
+      );
+    }
+
     return (
-      <Message
-        text={error ?? 'Error while fetching data'}
-        onPress={fetch}
-      />
+      <ScrollView contentContainerStyle={{ paddingTop: 200 }}>
+        <View style={[styles.content, { backgroundColor: colors.background }]}>
+          <Header />
+          <InfoRow />
+          <Text style={[styles.tagline, { color: colors.text }]}>{movie.tagline}</Text>
+          <Overview />
+          <Casts />
+        </View>
+        <View style={[styles.floating, { backgroundColor: colors.background }]}>
+          <Image
+            source={{ uri: `${image_base_uri}/${movie.poster_path}` }}
+            style={styles.poster}
+          />
+        </View>
+      </ScrollView>
     );
   }
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle='light-content' />
+      <StatusBar backgroundColor={'white'} barStyle={Platform.OS == 'ios' ? 'light-content' : 'dark-content'} />
       <Image
-        source={{ uri: `${image_base_uri}/${movie.backdrop_path}` }}
+        source={{ uri: `${image_base_uri}/${movie?.backdrop_path}` }}
         style={styles.cover}
       />
       <View style={[styles.overlay, { backgroundColor: colors.background }]} />
@@ -116,25 +141,11 @@ const MovieDetailsScreen = () => {
         <AppBar
           action={<IconButton
             color={colors.background}
-            icon={<HeartIcon filled={favourites.includes(movie.id)} color={colors.primary} />}
-            onPress={() => toggleFavourite(!favourites.includes(movie.id))}
+            icon={<HeartIcon filled={favourites.includes(movie?.id ?? 0)} color={colors.primary} />}
+            onPress={() => toggleFavourite(!favourites.includes(movie?.id ?? 0))}
           />}
         />
-        <ScrollView contentContainerStyle={{ paddingTop: 200 }}>
-          <View style={[styles.content, { backgroundColor: colors.background }]}>
-            <Header />
-            <InfoRow />
-            <Text style={[styles.tagline, { color: colors.text }]}>{movie.tagline}</Text>
-            <Overview />
-            <Casts />
-          </View>
-          <View style={[styles.floating, { backgroundColor: colors.background }]}>
-            <Image
-              source={{ uri: `${image_base_uri}/${movie.poster_path}` }}
-              style={styles.poster}
-            />
-          </View>
-        </ScrollView>
+        <UI />
       </View>
     </View>
   );

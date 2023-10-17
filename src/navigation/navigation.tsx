@@ -33,7 +33,7 @@ const Navigation = () => {
 
   return (
     <NavigationContainer theme={AppTheme}>
-      <StatusBar barStyle="dark-content" />
+      <StatusBar backgroundColor={'white'} barStyle="dark-content" />
       {loading ?
         <Loading />
         :
