@@ -1,4 +1,3 @@
-import { View } from "react-native";
 import { Path, Svg } from "react-native-svg";
 
 interface IconProps {

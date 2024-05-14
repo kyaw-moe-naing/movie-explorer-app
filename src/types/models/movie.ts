@@ -1,15 +1,15 @@
-import { Cast } from "./cast";
+import { CastModel } from "./cast";
 
-interface Genre {
+interface GenreModel {
   id: number;
   name: string;
 }
 
-interface Movie {
+interface MovieModel {
   adult: boolean;
   backdrop_path: string;
   genre_ids: number[];
-  genres: Genre[];
+  genres: GenreModel[];
   id: number;
   original_language: string;
   original_title: string;
@@ -23,8 +23,8 @@ interface Movie {
   video: boolean;
   vote_average: number;
   vote_count: number;
-  cast: Cast[];
-  crew: Cast[];
+  cast: CastModel[];
+  crew: CastModel[];
 }
 
-export { type Movie }
+export { type MovieModel }

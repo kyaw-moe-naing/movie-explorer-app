@@ -1,19 +1,20 @@
 import { FlatList, StyleSheet } from "react-native";
-import { useAppDispatch, useAppSelector } from "../../../redux/hook";
-import { apiSlice, useGetUpcomingMoviesQuery } from "../../../redux/slices/api";
-import { addToFavourite, getFavourites, getPage, removeFromFavourite, setPage } from "../../../redux/slices/app";
+import { useAppDispatch, useAppSelector } from "app/hook";
+import { addToFavourite, getFavourites, removeFromFavourite } from "app/slices/app";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
-import { RootStackParamList } from "../../../navigation/navigation";
-import MovieCard from "../../../components/MovieCard";
-import Loading from "../../../components/Loading";
-import Message from "../../../components/Message";
+import { RootStackParamList } from "navigation/containers/app";
+import MovieCard from "components/MovieCard";
+import Loading from "components/Loading";
+import Message from "components/Message";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import { useGetUpcomingMoviesQuery } from "app/services/movie/movie";
+import { useState } from "react";
 
 const UpcomingMovies = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'Home'>>();
 
-  const page = useAppSelector(getPage);
+  const [page, setPage] = useState<number>(0);
   const favourites = useAppSelector(getFavourites);
 
   const dispatch = useAppDispatch();
@@ -25,12 +26,7 @@ const UpcomingMovies = () => {
     isError,
     error,
     refetch
-  } = useGetUpcomingMoviesQuery({ page: page, language: 'en-US' })
-
-  function loadMore() {
-    dispatch(setPage(page + 1));
-    dispatch(apiSlice.endpoints.getUpcomingMovies.initiate({ page: page + 1, language: 'en-US' }))
-  }
+  } = useGetUpcomingMoviesQuery({ page: page })
 
   function toggleFavourite(id: number, value: boolean) {
     if (value) {
@@ -72,7 +68,7 @@ const UpcomingMovies = () => {
         onToggleFavourite={(value) => toggleFavourite(render.item.id, value)}
       />}
       keyExtractor={item => item.id.toString()}
-      onEndReached={!isFetching ? loadMore : undefined}
+      onEndReached={!isFetching ? () => setPage(page + 1) : undefined}
       ListFooterComponent={<Loading />}
     />
   );

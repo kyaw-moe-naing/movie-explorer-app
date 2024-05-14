@@ -1,12 +1,6 @@
-import HomeScreen from "../view/home/Home";
-import MovieDetailsScreen from "../view/details/MovieDetails";
-
-interface Route {
-  name: string;
-  component: any;
-}
-
-export default Route;
+import MovieDetailsScreen from "screens/details/MovieDetails";
+import HomeScreen from "screens/home/Home";
+import Route from "types/route";
 
 export const routes: Route[] = [
   { name: "Home", component: HomeScreen },

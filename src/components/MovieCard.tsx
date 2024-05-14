@@ -2,12 +2,12 @@ import { useTheme } from "@react-navigation/native";
 import { StyleSheet, View, Image, Text, TouchableOpacity } from "react-native"
 import IconButton from "./IconButton";
 import { HeartIcon } from "./Icons";
-import { Movie } from "../models/movie";
 import Moment from 'moment';
-import { image_base_uri } from "../util/constants";
+import { IMAGE_BASE_URL } from "utils/constants";
+import { MovieModel } from "types/models/movie";
 
 interface MovieCardProps {
-  movie: Movie;
+  movie: MovieModel;
   onPress: (e: any) => void;
   isFavourite: boolean;
   onToggleFavourite: (value: boolean) => void;
@@ -26,13 +26,13 @@ const MovieCard = (props: MovieCardProps) => {
       style={styles.container}
       onPress={onPress}>
       <Image
-        source={{ uri: `${image_base_uri}/${movie.backdrop_path}` }}
+        source={{ uri: `${IMAGE_BASE_URL}/${movie.backdrop_path}` }}
         style={styles.cover}
       />
       <View style={[styles.overlay, { backgroundColor: colors.background }]} />
       <View style={[styles.floating, { backgroundColor: colors.background }]}>
         <Image
-          source={{ uri: `${image_base_uri}/${movie.poster_path}` }}
+          source={{ uri: `${IMAGE_BASE_URL}/${movie.poster_path}` }}
           style={styles.poster}
         />
       </View>

@@ -1,7 +1,6 @@
 import { SafeAreaView, StyleSheet, View } from "react-native"
-import Avatar from "./Avatar";
 import IconButton from "./IconButton";
-import { BackIcon, HeartIcon } from "./Icons";
+import { BackIcon } from "./Icons";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { ReactNode } from "react";
 

@@ -1,23 +1,20 @@
 import { useTheme } from "@react-navigation/native";
+import Avatar from "components/Avatar";
+import IconButton from "components/IconButton";
+import { MenuIcon } from "components/Icons";
 import { Alert, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
-import Button from "../../../components/Button";
-import Avatar from "../../../components/Avatar";
-import { MenuIcon } from "../../../components/Icons";
-import IconButton from "../../../components/IconButton";
-import auth from '@react-native-firebase/auth';
-import { Tab } from "../../../util/constants";
-import { useAppDispatch, useAppSelector } from "../../../redux/hook";
-import { getTab, setTab } from "../../../redux/slices/app";
+import { Tab } from "utils/constants";
+import auth from '@react-native-firebase/auth'
+import Button from "components/Button";
 
-const Header = () => {
+interface HeaderProps {
+  tabs: Tab[];
+  tab: Tab;
+  onChange: (tab: Tab) => void;
+}
+
+const Header = (props: HeaderProps) => {
   const { colors } = useTheme();
-
-  const tab = useAppSelector(getTab);
-  const dispatch = useAppDispatch();
-
-  function changeTab(newTab: Tab) {
-    dispatch(setTab(newTab));
-  }
 
   function logout() {
     Alert.alert(
@@ -57,12 +54,12 @@ const Header = () => {
         horizontal
         contentContainerStyle={styles.list}
       >
-        {[Tab.UPCOMING, Tab.POPULAR].map((t) => <Button
+        {props.tabs.map((t) => <Button
           key={t}
-          disabled={tab == t}
-          selected={tab == t}
+          disabled={props.tab == t}
+          selected={props.tab == t}
           title={t}
-          onPress={() => changeTab(t)}
+          onPress={() => props.onChange(t)}
         />)}
       </ScrollView>
     </SafeAreaView>

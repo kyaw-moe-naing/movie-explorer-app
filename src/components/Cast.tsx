@@ -1,11 +1,11 @@
-import { StyleSheet, Text, View } from "react-native";
-import Avatar from "../../../components/Avatar";
 import { useTheme } from "@react-navigation/native";
-import { Cast } from "../../../models/cast";
-import { image_base_uri } from "../../../util/constants";
+import Avatar from "components/Avatar";
+import { View, Text, StyleSheet } from "react-native";
+import { IMAGE_BASE_URL } from "utils/constants";
+import { CastModel } from "types/models/cast";
 
 interface CastProps {
-  cast: Cast;
+  cast: CastModel;
 }
 
 const CastComponent = (props: CastProps) => {
@@ -13,7 +13,7 @@ const CastComponent = (props: CastProps) => {
 
   return (
     <View style={styles.container}>
-      <Avatar uri={`${image_base_uri}/${props.cast.profile_path}`} />
+      <Avatar uri={`${IMAGE_BASE_URL}/${props.cast.profile_path}`} />
       <Text style={[styles.name, { color: colors.text }]}>{props.cast.name}</Text>
     </View>
   );

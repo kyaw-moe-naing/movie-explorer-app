@@ -1,13 +1,13 @@
 import React from 'react';
-import Navigation from './src/navigation/navigation';
+import AppContainer from './src/navigation/containers/app';
 import 'react-native-gesture-handler';
 import { Provider } from 'react-redux';
-import { store } from './src/redux/store';
+import { store } from './src/app/store';
 
 const App = () => {
   return (
     <Provider store={store}>
-      <Navigation />
+      <AppContainer />
     </Provider>
   );
 };

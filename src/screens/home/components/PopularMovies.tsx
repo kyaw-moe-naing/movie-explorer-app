@@ -1,19 +1,20 @@
-import { FlatList, StyleSheet } from "react-native";
-import { useAppDispatch, useAppSelector } from "../../../redux/hook";
-import { apiSlice, useGetPopularMoviesQuery } from "../../../redux/slices/api";
-import { addToFavourite, getFavourites, getPage, removeFromFavourite, setPage } from "../../../redux/slices/app";
-import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
-import { RootStackParamList } from "../../../navigation/navigation";
-import MovieCard from "../../../components/MovieCard";
-import Message from "../../../components/Message";
-import Loading from "../../../components/Loading";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import { useAppSelector, useAppDispatch } from "app/hook";
+import { useGetPopularMoviesQuery } from "app/services/movie/movie";
+import { getFavourites, addToFavourite, removeFromFavourite } from "app/slices/app";
+import Loading from "components/Loading";
+import Message from "components/Message";
+import MovieCard from "components/MovieCard";
+import { RootStackParamList } from "navigation/containers/app";
+import { useState } from "react";
+import { FlatList, StyleSheet } from "react-native";
 
 const PopularMovies = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'Home'>>();
 
-  const page = useAppSelector(getPage);
+  const [page, setPage] = useState<number>(0);
   const favourites = useAppSelector(getFavourites);
 
   const dispatch = useAppDispatch();
@@ -25,12 +26,7 @@ const PopularMovies = () => {
     isError,
     error,
     refetch
-  } = useGetPopularMoviesQuery({ page: page, language: 'en-US' })
-
-  function loadMore() {
-    dispatch(setPage(page + 1));
-    dispatch(apiSlice.endpoints.getPopularMovies.initiate({ page: page + 1, language: 'en-US' }))
-  }
+  } = useGetPopularMoviesQuery({ page: page })
 
   function toggleFavourite(id: number, value: boolean) {
     if (value) {
@@ -39,7 +35,6 @@ const PopularMovies = () => {
       dispatch(removeFromFavourite(id));
     }
   }
-
 
   if (isFetching && page == 1) {
     return (
@@ -73,7 +68,7 @@ const PopularMovies = () => {
         onToggleFavourite={(value) => toggleFavourite(render.item.id, value)}
       />}
       keyExtractor={item => item.id.toString()}
-      onEndReached={!isFetching ? loadMore : undefined}
+      onEndReached={!isFetching ? () => setPage(page + 1) : undefined}
       ListFooterComponent={<Loading />}
     />
   );

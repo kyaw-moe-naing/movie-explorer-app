@@ -1,4 +1,4 @@
-interface Cast {
+interface CastModel {
   adult: boolean;
   gender: number;
   id: number;
@@ -13,4 +13,4 @@ interface Cast {
   order: number;
 }
 
-export { type Cast }
+export { type CastModel }

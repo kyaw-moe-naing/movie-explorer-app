@@ -1,13 +1,13 @@
 import { Action, ThunkAction, configureStore } from '@reduxjs/toolkit'
 import app from './slices/app';
-import { apiSlice } from './slices/api';
+import { api } from './services/api';
 
 export const store = configureStore({
   reducer: {
     app: app,
-    [apiSlice.reducerPath]: apiSlice.reducer,
+    [api.reducerPath]: api.reducer,
   },
-  middleware: getDefaultMiddleware => getDefaultMiddleware().concat(apiSlice.middleware)
+  middleware: getDefaultMiddleware => getDefaultMiddleware().concat(api.middleware)
 })
 
 export type RootState = ReturnType<typeof store.getState>;

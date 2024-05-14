@@ -1,14 +1,13 @@
 
-import { NavigationContainer, useTheme } from "@react-navigation/native";
-import { StatusBar, StyleSheet, View } from 'react-native';
-import AppTheme from '../theme/theme';
-import { routes } from './routes';
+import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { useEffect, useState } from "react";
+import Loading from "components/Loading";
+import { routes } from "navigation/routes";
+import { useState, useEffect } from "react";
+import { StatusBar } from 'react-native';
+import LoginScreen from "screens/login/Login";
+import AppTheme from "src/theme/theme";
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
-import LoginScreen from "../view/login/Login";
-import Spinner from "react-native-spinkit";
-import Loading from "../components/Loading";
 
 const Stack = createStackNavigator();
 
@@ -17,7 +16,7 @@ export type RootStackParamList = {
   MovieDetails: { id: number };
 };
 
-const Navigation = () => {
+const AppContainer = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
 
@@ -57,4 +56,4 @@ const Navigation = () => {
   );
 }
 
-export default Navigation;
+export default AppContainer;

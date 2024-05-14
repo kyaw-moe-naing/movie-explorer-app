@@ -1,13 +1,12 @@
 import { SafeAreaView, StyleSheet, Text, View } from "react-native"
-import Button from "../../components/Button";
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
 import { useState } from "react";
 import { useTheme } from "@react-navigation/native";
+import { GOOGLE_SIGN_IN_WEB_CLIENT_ID } from "utils/constants";
+import Button from "components/Button";
 
-GoogleSignin.configure({
-  webClientId: '412574812768-15i7i5pa93b7fmu5dki4u67bqiunvsh4.apps.googleusercontent.com',
-});
+GoogleSignin.configure({ webClientId: GOOGLE_SIGN_IN_WEB_CLIENT_ID });
 
 const LoginScreen = () => {
   const { colors } = useTheme();
